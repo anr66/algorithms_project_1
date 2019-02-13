@@ -60,12 +60,41 @@ BigUnsigned generateBigInt()
 	
 }
 
-BigUnsigned fermatTest(BigUnsigned p)
+BigUnsigned modExp(x, y, m)
 {
-	BigUnsigned a = BigUnsigned(1);
+	if (y = 0)
+	{
+		return(1);
+	}
 	
+	else
+	{
+		z = mod-exp(x, y div 2, m);
+	}
 	
+	if (y % 2 = 0)
+	{
+		return(z * z mod m);
+	}	
 	
+	else
+	{
+		return(x * z * z mod m);
+	}
+}
+
+
+BigUnsigned fermatTest()
+{
+	BigUnsigned a1 = generateBigInt();
+	BigUnsigned a2 = generateBigInt();
 	
 }
+
+
+
+
+
+
+
 
