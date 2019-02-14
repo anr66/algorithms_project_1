@@ -4,7 +4,11 @@
 #include <string>
 #include <iostream>
 #include <stdlib.h> 
+#include <ofstream>
 
+
+using std::ofstream;
+using std::cout;
 
 // 'BigIntegerLibrary.hh' includes all of the library headers.
 #include "BigIntegerLibrary.hh"
@@ -36,6 +40,30 @@ int main()
 		//std::cout << big3;
 		//std::cout << "my big3/big2 !!!\n";
 		//std::cout << big3/big2;
+		
+		// generate
+		BigUnsigned p = generateBigPrime();
+		BigUnsigned q = generateBigPrime();
+		
+		// print them out
+		cout << "p = " << p << "\n";
+		cout << "q = " << q << "\n";
+		
+		// write them to a file
+		ofstream p_q("p_q.txt");
+		p_q << p << "\n";
+		p_q << q << "\n";
+		
+		// multiply p and q to get n
+		BigUnsigned n = p * q;
+		
+		// calculate theta
+		BigUnsigned theta = (p - 1) * (q - 1);
+		if (theta % 2 == 0)
+		{
+			theta++;
+		}
+
 
 	}
 
@@ -69,30 +97,51 @@ BigUnsigned modExp(x, y, m)
 	
 	else
 	{
-		z = mod-exp(x, y div 2, m);
+		z = modExp(x, y / 2, m);
 	}
 	
 	if (y % 2 = 0)
 	{
-		return(z * z mod m);
+		return(z * z % m);
 	}	
 	
 	else
 	{
-		return(x * z * z mod m);
+		return(x * z * z % m);
 	}
 }
 
 
-BigUnsigned fermatTest()
+BigUnsigned fermatTest(BigUnsigned n)
 {
 	BigUnsigned a1 = generateBigInt();
 	BigUnsigned a2 = generateBigInt();
-	
+	return (modExp(a1, n - 1, n) == 1) && (modExp(a2, n - 1, n) == 1);
 }
 
 
+BigUnsigned generateBigPrime()
+{
+   BigUnsigned x = generateBigInt(155);
+   while (!fermatTest(x))
+   {
+      x = getRandomNumber(155);
+   }
+   
+   return x;
+}
 
+
+BigUnsigned generateE(BigUnsigned theta)
+{
+   BigUnsigned e = generateBigInt(20);
+   while (gcd(e, theta) != 1)
+   {
+      e = generateBigInt(20);
+   }
+   
+   return e;
+}
 
 
 
