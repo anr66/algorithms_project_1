@@ -4,14 +4,21 @@
 #include <string>
 #include <iostream>
 #include <stdlib.h> 
-#include <ofstream>
+#include <fstream>
+
+// 'BigIntegerLibrary.hh' includes all of the library headers.
+#include "BigIntegerLibrary.hh"
 
 
 using std::ofstream;
 using std::cout;
 
-// 'BigIntegerLibrary.hh' includes all of the library headers.
-#include "BigIntegerLibrary.hh"
+BigUnsigned generateBigInt(int digits);
+BigUnsigned modExp(BigUnsigned x, BigUnsigned y, BigUnsigned m);
+bool fermatTest(BigUnsigned n);
+BigUnsigned generateBigPrime();
+BigUnsigned generateE(BigUnsigned theta);
+
 
 int main()
 {
@@ -76,21 +83,23 @@ int main()
 }
 
 
-BigUnsigned generateBigInt()
+BigUnsigned generateBigInt(int digits)
 {
 	BigUnsigned big = BigUnsigned(1);
-	for (int i = 0; i < 400; i++)
+	for (int i = 0; i <= digits; i++)
 	{
 		big = (big * 10) + rand();
 	}
 	
-	return big1;
+	return big;
 	
 }
 
-BigUnsigned modExp(x, y, m)
+BigUnsigned modExp(BigUnsigned x, BigUnsigned y, BigUnsigned m)
 {
-	if (y = 0)
+	BigUnsigned z;
+
+	if (y == 0)
 	{
 		return(1);
 	}
@@ -100,7 +109,7 @@ BigUnsigned modExp(x, y, m)
 		z = modExp(x, y / 2, m);
 	}
 	
-	if (y % 2 = 0)
+	if ((y % 2) == 0)
 	{
 		return(z * z % m);
 	}	
@@ -112,20 +121,20 @@ BigUnsigned modExp(x, y, m)
 }
 
 
-BigUnsigned fermatTest(BigUnsigned n)
+bool fermatTest(BigUnsigned n)
 {
-	BigUnsigned a1 = generateBigInt();
-	BigUnsigned a2 = generateBigInt();
+	BigUnsigned a1 = generateBigInt(20);
+	BigUnsigned a2 = generateBigInt(20);
 	return (modExp(a1, n - 1, n) == 1) && (modExp(a2, n - 1, n) == 1);
 }
 
 
 BigUnsigned generateBigPrime()
 {
-   BigUnsigned x = generateBigInt(155);
+   BigUnsigned x = generateBigInt(20);
    while (!fermatTest(x))
    {
-      x = getRandomNumber(155);
+      x = generateBigInt(20);
    }
    
    return x;
