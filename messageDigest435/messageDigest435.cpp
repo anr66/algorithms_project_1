@@ -12,16 +12,16 @@
 int main(int argc, char *argv[])
 {
    //demonstrating how sha256 works
-   std::string input = "testing";
-   std::string output1 = sha256(input);
-   std::cout << "sha256('"<< input << "'):" << output1 << "\n";
+   //std::string input = "testing";
+   //std::string output1 = sha256(input);
+   //std::cout << "sha256('"<< input << "'):" << output1 << "\n";
    
    //demo bigInt works here
-   BigUnsigned a = stringToBigUnsigned("124338907642982722929222542626327282");
-   BigUnsigned b = stringToBigUnsigned("124338907642977775546469426263278643");
-   std::cout << "big a = " <<a<<"\n";
-   std::cout << "big b = " <<b<<"\n";
-   std::cout << "big a*b = " <<a*b<<"\n";
+   //BigUnsigned a = stringToBigUnsigned("124338907642982722929222542626327282");
+   //BigUnsigned b = stringToBigUnsigned("124338907642977775546469426263278643"); 
+   //std::cout << "big a = " <<a<<"\n";
+   //std::cout << "big b = " <<b<<"\n";
+   //std::cout << "big a*b = " <<a*b<<"\n";
 
    //Second part of your project starts here
    if (argc != 3 || (argv[1][0]!='s' && argv[1][0]!='v')) 
@@ -50,18 +50,95 @@ int main(int argc, char *argv[])
       myfile2.close();
       
       //std::cout<<memblock;
+      // sha256 hash the memblock array
+      std::string memblock_sha = sha256(memblock);
+      BigUnsigned memblock_unsigned = BigUnsigned(BigUnsignedInABase(memblock_sha, 32));
+
+      std::cout << memblock_unsigned << "\n";
         
-      if (argv[1][0]=='s') {
-         std::cout << "\n"<<"Need to sign the doc.\n";
-         //.....
-         
+      if (argv[1][0]=='s')
+      {
+         //std::cout << "\n"<<"Need to sign the doc.\n";
+         std::cout << "Signing document..." << "\n";
+
+         BigUnsigned d;
+         BigUnsigned n;
+
+         // read the text file
+         std::ifstream d_n("d_n.txt");
+
+         // if it worked..
+         if (d_n.good())
+         {
+            // read the d and n numbers in string format
+            std::string d_string;
+            std::string n_string;
+            std::getline(d_n, d_string);
+            std::getline(d_n, n_string);    
+            d = stringToBigUnsigned(d_string);
+            n = stringToBigUnsigned(n_string);
+         }
+
+         std::cout << d << "\n";
+         std::cout << n << "\n";
+
+         // create the signature and the file to store it
+         BigUnsigned signature = modexp(memblock_unsigned, d, n);
+         std::ofstream sig_file(filename + ".signature");
+         sig_file << bigUnsignedToString(signature) << "\n";
+         sig_file.close();
+
+         std::cout << "Done" << "\n";
       }
-      else {
-         std::cout << "\n"<<"Need to verify the doc.\n";
-         //.....
-         
+
+      else if (argv[1][0]=='v')
+      {
+         //std::cout << "\n"<<"Need to verify the doc.\n";
+
+         std::cout << "Verifying document...\n";
+
+         BigUnsigned e;
+         BigUnsigned n;
+
+         // read the text file
+         std::ifstream e_n("e_n.txt");
+
+         // if it worked..
+         if (e_n.good())
+         {
+            // read the e and n numbers in string format
+            std::string e_string;
+            std::string n_string;
+            std::getline(e_n, e_string);
+            std::getline(e_n, n_string);    
+            e = stringToBigUnsigned(e_string);
+            n = stringToBigUnsigned(n_string);
+         }
+
+         // open the signature file
+         BigUnsigned signature;
+         std::ifstream sig_file(filename + ".signature");
+
+         // if it worked..
+         if (sig_file.good())
+         {
+            // grab the string from the file and make it an int
+            std::string signature_string;
+            std::getline(sig_file, signature_string);
+            signature = stringToBigUnsigned(signature_string);
+         }
+
+         // print the signature
+         std::cout << "signature = " << signature << "\n";
+
+         BigUnsigned test = modexp(signature, e, n);
+
+         std::cout << "test      = " << test << "\n";
+         std::cout << (test == memblock_unsigned) << "\n";
       }
+
       delete[] memblock;
     }
+
     return 0;
 }
