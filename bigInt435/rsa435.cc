@@ -56,13 +56,14 @@ int main()
 		cout << "p = " << p << "\n";
 		cout << "q = " << q << "\n";
 		
-		// write them to a file
+		// write p and q to a file
 		ofstream p_q("p_q.txt");
 		p_q << p << "\n";
 		p_q << q << "\n";
 		
 		// multiply p and q to get n
 		BigUnsigned n = p * q;
+		cout << "n = " << n << "\n";
 		
 		// calculate theta
 		BigUnsigned theta = (p - 1) * (q - 1);
@@ -71,6 +72,25 @@ int main()
 			theta++;
 		}
 
+		cout << "theta = " << theta << "\n";
+
+		// calculate e using theta
+		BigUnsigned e = generateE(theta);
+		cout << "e = " << e << "\n";
+
+		// calculate d
+		BigUnsigned d = modinv(e, theta);
+		cout << "d = " << d << "\n";
+
+		// write e and n to a file
+		ofstream e_n("e_n.txt");
+		e_n << e << "\n";
+		e_n << n << "\n";
+
+		// write d and n to a file
+		ofstream d_n("d_n.txt");
+		d_n << d << "\n";
+		d_n << n << "\n";
 
 	}
 
@@ -94,6 +114,7 @@ BigUnsigned generateBigInt(int digits)
 	return big;
 	
 }
+
 
 BigUnsigned modExp(BigUnsigned x, BigUnsigned y, BigUnsigned m)
 {
