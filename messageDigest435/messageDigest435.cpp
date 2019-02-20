@@ -27,8 +27,7 @@ int main(int argc, char *argv[])
    if (argc != 3 || (argv[1][0]!='s' && argv[1][0]!='v')) 
       std::cout << "wrong format! should be \"a.exe s filename\"";
    else {
-      std::string filename = argv[2];
-      
+      std::string filename = argv[2]; 
             
       //read the file
       std::streampos begin,end;
@@ -37,7 +36,7 @@ int main(int argc, char *argv[])
       myfile.seekg (0, std::ios::end);
       end = myfile.tellg();
       std::streampos size = end-begin;
-      //std::cout << "size of the file: " << size << " bytes.\n"; //size of the file
+      std::cout << "size of the file: " << size << " bytes.\n"; //size of the file
       
       myfile.seekg (0, std::ios::beg);
       char * memblock = new char[size];
@@ -51,10 +50,14 @@ int main(int argc, char *argv[])
       
       //std::cout<<memblock;
       // sha256 hash the memblock array
-      std::string memblock_sha = sha256(memblock);
-      BigUnsigned memblock_unsigned = BigUnsigned(BigUnsignedInABase(memblock_sha, 32));
+      std::string memblockString(memblock);
+      std::string memblock_hash = sha256(memblockString);
+      BigUnsigned memblock_num = BigUnsigned(BigUnsignedInABase(memblock_hash, 16));
 
-      std::cout << memblock_unsigned << "\n";
+	  //std::string memblock_hash = sha256(memblock);
+	  //BigUnsigned memblock_num = BigUnsigned(BigUnsignedInABase(memblock_hash, 16));
+
+      //std::cout << memblock_unsigned << "\n";
         
       if (argv[1][0]=='s')
       {
@@ -79,13 +82,10 @@ int main(int argc, char *argv[])
             n = stringToBigUnsigned(n_string);
          }
 
-         std::cout << d << "\n";
-         std::cout << n << "\n";
-
          // create the signature and the file to store it
-         BigUnsigned signature = modexp(memblock_unsigned, d, n);
+         BigUnsigned signature = modexp(memblock_num, d, n);
          std::ofstream sig_file(filename + ".signature");
-         sig_file << bigUnsignedToString(signature) << "\n";
+         sig_file << bigUnsignedToString(signature);// << "\n";
          sig_file.close();
 
          std::cout << "Done" << "\n";
@@ -131,10 +131,21 @@ int main(int argc, char *argv[])
          // print the signature
          std::cout << "signature = " << signature << "\n";
 
+
          BigUnsigned test = modexp(signature, e, n);
 
          std::cout << "test      = " << test << "\n";
-         std::cout << (test == memblock_unsigned) << "\n";
+         
+         if (test == memblock_num)
+         {
+            std::cout << "Verification was successful\n";
+         }
+
+         else
+         {
+            std::cout << "Verification was unsuccessful\n";
+         }
+         
       }
 
       delete[] memblock;
