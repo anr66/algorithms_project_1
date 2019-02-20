@@ -3,8 +3,9 @@
 // Standard libraries
 #include <string>
 #include <iostream>
-#include <stdlib.h> 
+#include <stdlib.h>
 #include <fstream>
+#include <ctime>
 
 // 'BigIntegerLibrary.hh' includes all of the library headers.
 #include "BigIntegerLibrary.hh"
@@ -13,7 +14,7 @@
 using std::ofstream;
 using std::cout;
 
-BigUnsigned generateBigInt(int digits);
+BigUnsigned generateBigInt(BigUnsigned digits);
 BigUnsigned modExp(BigUnsigned x, BigUnsigned y, BigUnsigned m);
 bool fermatTest(BigUnsigned n);
 BigUnsigned generateBigPrime();
@@ -23,12 +24,13 @@ bool relativelyPrime(BigUnsigned x, BigUnsigned y);
 
 int main()
 {
+	srand(time(NULL));
     /* The library throws 'const char *' error messages when things go
     * wrong.  It's a good idea to catch them using a 'try' block like this
     * one.  Your C++ compiler might need a command-line option to compile
     * code that uses exceptions. */
 	try
-	{      
+	{
 		//std::cout << "a couple of test cases for 3460:435/535 Algorithms!!!\n";
 
 
@@ -36,7 +38,7 @@ int main()
 		//std::cout << big1;
 		//BigUnsigned big2 = BigUnsigned(1);
 
-		//for (int i=0;i<400;i++) 
+		//for (int i=0;i<400;i++)
 		//{
 		//	big2 = big2*10 +rand();
 		//}
@@ -68,10 +70,6 @@ int main()
 
 		// calculate theta
 		BigUnsigned theta = (p - 1) * (q - 1);
-		if (theta % 2 == 0)
-		{
-			theta++;
-		}
 
 		cout << "theta = " << theta << "\n";
 
@@ -81,6 +79,7 @@ int main()
 
 		// calculate d
 		BigUnsigned d = modinv(e, theta);
+
 		cout << "d = " << d << "\n";
 
 		// write e and n to a file
@@ -104,10 +103,10 @@ int main()
 }
 
 
-BigUnsigned generateBigInt(int digits)
+BigUnsigned generateBigInt(BigUnsigned digits)
 {
 	BigUnsigned big = BigUnsigned(1);
-	for (int i = 0; i <= digits; i++)
+	for (int i = 0; digits >= i; i++)
 	{
 		big = (big * 10) + rand();
 	}
@@ -134,7 +133,7 @@ BigUnsigned modExp(BigUnsigned x, BigUnsigned y, BigUnsigned m)
 	if ((y % 2) == 0)
 	{
 		return(z * z % m);
-	}	
+	}
 
 	else
 	{
@@ -159,11 +158,6 @@ BigUnsigned generateBigPrime()
 		x = generateBigInt(155);
 	}
 
-	if (x % 2 == 0)
-	{
-		x++;
-	}
-
 	return x;
 }
 
@@ -182,15 +176,5 @@ BigUnsigned generateE(BigUnsigned theta)
 		e = generateBigInt(25);
 	}
 
-	if (e % 2 == 0)
-	{
-		e++;
-	}
-
 	return e;
 }
-
-
-
-
-
